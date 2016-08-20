@@ -59,6 +59,9 @@ pre {
 code {
   color: #666; }
 
+a code {
+  color: #00e; }
+
 pre a {
   text-decoration: underline;
   color: black; }
@@ -384,6 +387,8 @@ table#TOC {
   table#TOC tr.toc-level-1 td.toc-text {
     position: relative;
     left: 0; }
+  table#TOC tr.toc-level-2 td {
+    padding-top: 3pt; }
   table#TOC td.toc-number {
     display: none; }
   table#TOC code {

@@ -601,7 +601,7 @@ sub find-definitions(:$pod, :$origin, :$min-level = -1, :$url) {
 
             my $new-head = Pod::Heading.new(
                 :level(@pod-section[$i].level),
-                :contents[pod-link "$subkinds $name",
+                :contents[pod-link "($origin.name()) $subkinds $name",
                     $created.url ~ "#$origin.human-kind() $origin.name()".subst(:g, /\s+/, '_')
                 ]
             );
@@ -913,7 +913,16 @@ sub write-kind($kind) {
                     pod-heading("{.origin.human-kind} {.origin.name}"),
                     pod-block("From ",
                         pod-link(.origin.name,
-                            .origin.url ~ '#' ~ (.subkinds~'_' if .subkinds ~~ /fix/) ~ .name),
+                                 .origin.url ~ '#' ~ (.subkinds~'_' if .subkinds ~~ /fix/) ~
+                                  (
+                                      if .subkinds ~~ /fix/ { '' }
+                                      # It looks really weird, but in reality, it checks the pod content,
+                                      # then extracts a link(e.g. '(Type) routine foo'), then this string
+                                      # splits by space character and we take a correct category name.
+                                      # It works with sub/method/term/routine/*fix types, so all our links
+                                      # here are correct.
+                                      else { .pod[0].contents[0].contents.Str.split(' ')[1] ~ '_'; }
+                                  ) ~ .name.subst(' ', '_')),
                     ),
                     .pod.list,
                 })

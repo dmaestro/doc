@@ -66,6 +66,10 @@ code {
     color: #666;
 }
 
+a code {
+    color: #00e;
+}
+
 pre {
     a {
         text-decoration: underline;
@@ -492,6 +496,10 @@ table#TOC {
             position: relative;
             left: 0;
         }
+    }
+
+    tr.toc-level-2 td {
+        padding-top: 3pt;
     }
 
     td.toc-number {
