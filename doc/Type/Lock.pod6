@@ -4,7 +4,7 @@
 
 =SUBTITLE Low-level thread locking primitive
 
-    class Lock {}
+    class Lock { ... }
 
 A Lock is a low-level constructor for ensuring that only one thread works with
 a certain object at a given time, or runs a piece of code (called the
@@ -22,7 +22,7 @@ I<critical section>).
 Locks are reentrant, that is, a thread that holds the lock can lock it again
 without blocking.
 
-High-level Perl 6 code should avoid the direct usage of locks, because they
+High-level Perl 6 code should avoid the direct usage of locks, because they
 are not composable. Instead, high-level constructs such as
 L<Promise|/type/Promise>, L<Channel|/type/Channel> and Supply should be used
 whenever possible.
@@ -35,10 +35,11 @@ Defined as:
 
     method protect(Lock:D: &code)
 
-Runs C<&code> and makes sure it is only run in one thread at once.
+Usage:
 
-    my $l = Lock.new;
-    $l.protect({ #`( some unsafe operations here ) 1 + 1; });
+    LOCK.protect(CODE)
+
+Runs C<&code> and makes sure it is only run in one thread at once.
 
 =head2 method lock
 
@@ -46,10 +47,11 @@ Defined as:
 
     method lock(Lock:D:)
 
-Acquires the lock. If it is currently not available, waits for it.
+Usage:
 
-    my $l = Lock.new;
-    $l.lock;
+    LOCK.lock
+
+Acquires the lock. If it is currently not available, waits for it.
 
 =head2 method unlock
 
@@ -57,31 +59,30 @@ Defined as:
 
     method unlock(Lock:D:)
 
-Releases the lock.
+Usage:
 
-    my $l = Lock.new;
-    $l.lock;
-    $l.unlock;
+    LOCK.unlock
+
+Releases the lock.
 
 =head2 method condition
 
 Defined as:
 
-=begin code :skip-test
-my class ConditionVariable {
-    method wait();
-    method signal();
-    method signal_all();
-}
+    my class ConditionVariable {
+        method wait();
+        method signal();
+        method signal_all();
+    }
 
-method condition(Lock:D:) returns ConditionVariable:D
-=end code
+    method condition(Lock:D:) returns ConditionVariable:D
+
+Usage:
+
+    LOCK.condition
 
 Returns a condition variable. Compare
 L<http://web.stanford.edu/class/cs140/cgi-bin/lecture.php?topic=locks> or
 L<https://en.wikipedia.org/wiki/Monitor_%28synchronization%29> for background.
-
-    my $l = Lock.new;
-    $l.condition;
 
 =end pod

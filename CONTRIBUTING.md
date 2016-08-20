@@ -1,38 +1,12 @@
-# Contributing
+## Contributing
 
 Your patches to perl6/doc are very welcome.
 
 This document describes how to get started and helps to provide documentation
 that adheres to the common style and formatting guidelines.
 
-Your contributions will be credited in Rakudo release announcement. You name from
-the commit log will be used. If you'd like to be credited under a different name,
-please add it to [CREDITS file](https://github.com/rakudo/rakudo/blob/nom/CREDITS)
-
 If you have any questions regarding contributing to this project, please ask
 in the [#perl6 IRC channel](https://perl6.org/community/irc).
-
-# TABLE OF CONTENTS
-- [General principles](#general-principles)
-- [Documenting types](#documenting-types)
-- [Testing examples](#testing-examples)
-    - [Skipping tests](#skipping-tests)
-- [Debug mode](#debug-mode)
-    - [Invisible index anchors](#invisible-index-anchors)
-    - [Viewport size](#viewport-size)
-    - [Broken links](#broken-links)
-    - [Heading numbering](#heading-numbering)
-- [Reporting bugs](#reporting-bugs)
-- [Website Styles](#website-styles)
-- [Building the documentation](#building-the-documentation)
-    - [Dependency installation](#dependency-installation)
-        - [Rakudo](#rakudo)
-        - [Panda](#panda)
-        - [Pod::To::HTML](#podtohtml)
-        - [Mojolicious / Web Server](#mojolicious--web-server)
-        - [pygmentize](#pygmentize)
-        - [Inline::Python](#inlinepython)
-    - [Build and view the documentation](#build-and-view-the-documentation)
 
 ## General principles
 
@@ -42,11 +16,7 @@ in the [#perl6 IRC channel](https://perl6.org/community/irc).
 * Duplicate small pieces of information rather than rely on linking
 * Be explicit about routine signatures. If a method accepts a `*%args`,
   but treats some of them specially, list them separately.
-* Check out [the styleguide](STYLEGUIDE.md) for further guidance
-* For website: we support the current and previous major releases of Chrome, Firefox,
-Internet Explorer (Edge), and Safari. Please test layout changes.
-Lacking actual browsers to test in, you can use [browsershots.org](http://browsershots.org)
-or [browserstack.com](http://browserstack.com). Ensure the layout looks OK on mobile.
+* Check out [the styleguide](STYLEGUIDE.md) for further ... guidance
 
 ## Documenting types
 
@@ -94,29 +64,6 @@ more lines with the signatures. Other allowed words instead of `method` are
 `sub`, `trait`, `infix`, `prefix`, `postfix`, `circumfix`, `postcircumfix`,
 `term`. If you wish to hide a heading from any index prefix it with the empty
 comment `Z<>`.
-
-## Testing examples
-
-To export examples from all .pod6-files use `make extract-examples`. To run
-individual tests pick the right .p6-file from `examples/` as a parameter to
-`perl6`.
-
-### Skipping tests
-
-Some examples fail with compile time exceptions and would interrupt the test
-for a file. Use the pod-config option `skip-test` to skip them.
-
-    =begin code :skip-test
-        your-example-here();
-    =end code
-
-## Testing method completeness
-
-To get a list of methods that are found via introspection but not found in any
-pod6 under `doc/Type/`, use `util/list-missing-methods.p6`. It takes a
-directory or filepath as argument and limits the listing to the given file or
-any pod6-files found. All methods listed in `util/ignored-methods.txt` are
-ignored.
 
 ## Debug mode
 
@@ -226,11 +173,11 @@ Now the `panda` command should be available.
 
 #### Pod::To::HTML
 
-The program that builds the HTML version of the documentation
+The program which builds the HTML version of the documentation
 (`htmlify.p6`) uses `Pod::To::HTML` to convert Pod structures into HTML.
-You'll also need `Pod::To::BigPage`. Install these modules like so:
+Install `Pod::To::HTML` like so:
 
-    $ panda install Pod::To::HTML Pod::To::BigPage
+    $ panda install Pod::To::HTML
 
 #### Mojolicious / Web Server
 

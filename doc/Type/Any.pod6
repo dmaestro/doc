@@ -4,9 +4,9 @@
 
 =SUBTITLE Thing/object
 
-    class Any is Mu {}
+    class Any is Mu { ... }
 
-While L<Mu|/type/Mu> is the root of the Perl 6 class hierarchy, C<Any> is the class
+While L<Mu|/type/Mu> is the root of the Perl 6 class hierarchy, C<Any> is the class
 that serves as a default base class for new classes, and as the base class for
 most built-in classes.
 
@@ -24,9 +24,7 @@ Defined as:
 
 Usage:
 
-=begin code :skip-test
-EXPR.ACCEPTS(EXPR);
-=end code
+    EXPR.ACCEPTS(EXPR);
 
 Returns C<True> if C<$other === self> (i.e. it checks object identity).
 
@@ -37,6 +35,10 @@ Many built-in types override this for more specific comparisons
 Defined as:
 
     method any() returns Junction:D
+
+Usage:
+
+    LIST.any
 
 Interprets the invocant as a list and creates an
 C<any>-L<Junction|/type/Junction> from it.
@@ -50,6 +52,10 @@ Defined as:
 
     method all() returns Junction:D
 
+Usage:
+
+    LIST.all
+
 Interprets the invocant as a list and creates an
 C<all>-L<Junction|/type/Junction> from it.
 
@@ -62,6 +68,10 @@ Defined as:
 
     method one() returns Junction:D
 
+Usage:
+
+    LIST.one
+
 Interprets the invocant as a list and creates a
 C<one>-L<Junction|/type/Junction> from it.
 
@@ -73,6 +83,10 @@ C<one>-L<Junction|/type/Junction> from it.
 Defined as:
 
     method none() returns Junction:D
+
+Usage:
+
+    LIST.none
 
 Interprets the invocant as a list and creates a
 C<none>-L<Junction|/type/Junction> from it.
@@ -106,6 +120,11 @@ Defined as:
     multi sub    reverse(*@list ) returns List:D
     multi method reverse(List:D:) returns List:D
 
+Usage:
+
+    reverse(LIST)
+    LIST.reverse
+
 Returns a list with the same elements in reverse order.
 
 Note that C<reverse> always refers to reversing elements of a list;
@@ -113,8 +132,8 @@ to reverse the characters in a string, use L<flip>.
 
 Examples:
 
-    say <hello world!>.reverse;     # (world! hello)
-    say reverse ^10;                # (9 8 7 6 5 4 3 2 1 0)
+    say <hello world!>.reverse      # (world! hello)
+    say reverse ^10                 # (9 8 7 6 5 4 3 2 1 0)
 
 =head2 method sort
 
@@ -131,9 +150,7 @@ Examples:
 
 Defined as:
 
-=begin code :skip-test
-proto method map(|) is nodal { * }
-=end code
+    proto method map(|) is nodal { * }
     multi method map(\SELF: &block;; :$label, :$item)
     multi method map(HyperIterable:D: &block;; :$label)
 
@@ -181,8 +198,8 @@ in the process.
 Please not that C<flat> is not recursing into sub lists. You have to recurse by
 hand or reconsider your data structures. A single level of nesting can often be
 handled with L<destructuring|/type/Signature#Destructuring_Parameters> in
-signatures. For deeper structures you may consider
-L<gather/take|/syntax/gather take> to create a lazy list.
+signatures. For deeper structures you may consider L<gather/take|/syntax/gather
+take> to create a lazy list.
 
     my @a = [[1,2,3],[[4,5],6,7]];
     sub deepflat(@a){
@@ -190,7 +207,7 @@ L<gather/take|/syntax/gather take> to create a lazy list.
             take ($_ ~~ Iterable ?? deepflat($_).Slip !! $_)
         }
     };
-    dd deepflat(@a);
+    dd deepflat(@a);'
     # OUTPUT«(1, 2, 3, 4, 5, 6, 7).Seq␤»
 
 =head2 method eager

@@ -4,9 +4,7 @@
 
 =SUBTITLE Running process (asynchronous interface)
 
-=begin code :skip-test
-class Proc::Async {}
-=end code
+    class Proc::Async { ... }
 
 B<Note:> only the MoarVM backend of Rakudo implements C<Proc::Async> at the
 moment.
@@ -32,11 +30,9 @@ standard output and error handles, and optionally write to its standard input.
 
 This produces the following output:
 
-=begin code :skip-test
-Starting...
-Output: foo bar
-Done.
-=end code
+    Starting...
+    Output: foo bar
+    Done.
 
 An example that opens an external program for writing:
 
@@ -69,7 +65,6 @@ stream. If C<:bin> is passed, the standard output is passed along in  binary as
 L<Blob|/type/Blob>, otherwise it is interpreted as UTF-8, decoded, and passed
 along as L<Str|/type/Str>.
 
-    my $proc = Proc::Async.new(:r, 'echo', 'Perl 6');
     $proc.stdout.tap( -> $str {
         say "Got output '$str' from the external program";
     });
@@ -94,7 +89,6 @@ stream. If C<:bin> is passed, the standard error is passed along in  binary as
 L<Blob|/type/Blob>, otherwise it is interpreted as UTF-8, decoded, and passed
 along as L<Str|/type/Str>.
 
-    my $proc = Proc::Async.new(:r, 'echo', 'Perl 6');
     $proc.stderr.tap( -> $str {
         say "Got error '$str' from the external program";
     });
@@ -120,7 +114,7 @@ the program through the C<.print>, C<.say> and C<.write> methods.
 
 =head2 method start
 
-    method start(Proc::Async:D: :$scheduler = $*SCHEDULER, :$cwd = $*CWD) returns Promise:D
+    method start(Proc::Async:D:, :$scheduler = $*SCHEDULER, :$cwd = $*CWD) returns Promise:D
 
 Initiates spawning of the external program. Returns a promise that will be
 kept with a L<Proc|/type/Proc> object once the external
@@ -133,18 +127,14 @@ thrown.
 
 Note: If you wish to C<await> the Promise and discard its result, using
 
-=begin code :skip-test
-try await $p.start;
-=end code
+    try await $p.start;
 
 B<will throw> if the program exited with non-zero status, as the C<Proc>
 returned as the result of the Promise throws when sunk and in this case it
 will get sunk outside the C<try>. To avoid that, sink it yourself I<inside> the
 C<try>:
 
-=begin code :skip-test
-try sink await $p.start;
-=end code
+    try sink await $p.start;
 
 =head2 method started
 
@@ -236,7 +226,7 @@ L<X::Proc::Async::MustBeStarted> exception is thrown.
 
 =head2 method kill
 
-    method kill(Proc::Async:D: $signal = "HUP")
+    kill(Proc::Async:D: $signal = "HUP")
 
 Sends a signal to the running program. The signal can be a signal name
 ("KILL" or "SIGKILL"), an integer (9) or an element of the C<Signal> enum
