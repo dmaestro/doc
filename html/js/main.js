@@ -53,12 +53,12 @@ function setup_collapsible_TOC() {
                 var el = $(this);
                 if (el.text() == '[hide]') {
                     Cookies.set('toc_state', 'hidden');
-                    el.parents('nav').find('tbody').hide();
+                    el.parents('nav').find('tbody').slideUp();
                     el.text('[show]');
                 }
                 else {
                     Cookies.set('toc_state', 'shown');
-                    el.parents('nav').find('tbody').show();
+                    el.parents('nav').find('tbody').slideDown();
                     el.text('[hide]');
                 }
 

@@ -43,17 +43,6 @@ Returns C<True> if the routine is a multi sub or method.
 Returns a list of multi candidates, or a one-element list with itself
 if it's not a multi
 
-=head2 method cando
-
-    method cando(Capture $c)
-
-Returns a possibly-empty list of candidates that can be called with the
-given L<Capture|/type/Capture>, ordered by narrowest candidate first. For
-methods, the first element of the Capture needs to be the invocant:
-
-    .signature.say for "foo".^can("comb")[0].cando: \(Cool, "o");
-    # (Cool $: Str $matcher, $limit = Inf, *%_)
-
 =head2 method wrap
 
     method wrap(Routine:D: &wrapper)
@@ -101,9 +90,8 @@ objects or arrays), then for the purpose of caching they will only be compared
 based on their contents. Thus the second invocation will hit the cache in this
 case:
 
-=for code :skip-test
-say foo( [1, 2, 3] );   # runs foo
-say foo( [1, 2, 3] );   # doesn't run foo, uses cached value
+    say foo( [1, 2, 3] );   # runs foo
+    say foo( [1, 2, 3] );   # doesn't run foo, uses cached value
 
 =begin code
 use experimental :cached;
@@ -120,7 +108,7 @@ say nth-prime(43);
 
 produces this output:
 
-=begin code :skip-test
+=begin code
 Calculating 43th prime
 191
 191
@@ -129,7 +117,7 @@ Calculating 43th prime
 
 =head2 trait is pure
 
-    multi sub trait_mod:<is>(Routine $r, :$pure!)
+    multi sub trait_mod:<is>(Routine $r, :!$pure)
 
 Marks a subroutine as I<pure>, that is, it asserts that for the same input, it
 will always produce the same output without any additional side effects.
@@ -216,7 +204,7 @@ say f();
 
 produces this output:
 
-=begin code :skip-test
+=begin code
 42
 Saw 1 occurrence of deprecated code.
 ================================================================================
@@ -234,7 +222,7 @@ adapted, so that this message will disappear!
 
 Hides a routine from showing up in a default backtrace. For example
 
-=begin code :skip-test
+=begin code
 sub inner { die "OH NOEZ" };
 sub outer { inner() };
 outer();
@@ -242,7 +230,7 @@ outer();
 
 produces the error message and backtrace
 
-=begin code :skip-test
+=begin code
 OH NOEZ
   in sub inner at bt.p6:1
   in sub outer at bt.p6:2
@@ -259,7 +247,7 @@ outer();
 
 the error backtrace does not show it:
 
-=begin code :skip-test
+=begin code
 OH NOEZ
   in sub outer at bt.p6:2
   in block <unit> at bt.p6:3

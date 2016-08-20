@@ -2,9 +2,9 @@
 
 =TITLE Functions
 
-=SUBTITLE Functions and Functional Programming in Perl 6
+=SUBTITLE Functions and Functional Programming in Perl 6
 
-Routines are the smallest means of code reuse in Perl 6. They come in several
+Routines are the smallest means of code reuse in Perl 6. They come in several
 forms, most notably methods, which belong in classes and roles and are
 associated with an object, and functions, also called I<subroutines> or short
 I<sub>s, which exist independently of objects.
@@ -79,7 +79,9 @@ L<Block> syntax. It's used after every C<if>, C<for>, C<while>, etc.
     for 1, 2, 3, 4 -> $a, $b {
         say $a ~ $b;
     }
-    # OUTPUT«12␤34␤»
+
+    12
+    34
 
 They can also be used on their own as anonymous blocks of code.
 
@@ -109,6 +111,8 @@ generated. Both automatic variables can be used that the same time.
     sub s { dd @_, %_ };
     dd &s.signature # OUTPUT«:(*@_, *%_)␤»
 
+=comment capture, destructuring,
+
 =head2 Arguments
 X<|Argument>
 
@@ -126,13 +130,11 @@ may be supplied in any order, but it is considered good form to
 place named arguments after positional arguments.  Inside the
 argument list of a function call, some special syntax is supported:
 
-    sub f(|c){};
-    f :named(35);     # A named argument (in "adverb" form.)
-    f named => 35;    # Also a named argument.
-    f :35named;       # A named argument using abbreviated adverb form
-    f 'named' => 35;  # Not a named argument, a Pair in a positional argument
-    my \c = <a b c>.Capture;
-    f |c;            # Merge the contents of Capture $c as if they were supplied
+    f :named(35)     # A named argument (in "adverb" form.)
+    f named => 35    # Also a named argument.
+    f :35named       # A named argument using abbreviated adverb form
+    f 'named' => 35  # Not a named argument, a Pair in a positional argument
+    f |$c            # Merge the contents of Capture $c as if they were supplied
 
 Arguments passed to a function are conceptually first collected in a
 C<Capture> container.  Details about the syntax and use of these
@@ -141,42 +143,13 @@ containers can be found in the L<documentation on the C<Capture> class|Capture>.
 When using named arguments, note that normal List "pair-chaining" allows
 one to skip commas between named arguments.
 
-    sub f(|c){};
-    f :dest</tmp/foo> :src</tmp/bar> :lines(512);
-    f :32x :50y :110z;   # This flavor of "adverb" works, too
-    f :a:b:c;            # The spaces are also optional.
-
-=head2 Return values
-
-Any C<Block> or C<Routine> will provide it's last expression as a return value
-to the caller. If L<return|/language/control#return> or
-L<return-rw|/language/control#return-rw> are called their parameter, if any,
-will become the return value. The default return value is L<Nil|/type/Nil>.
-
-    sub a { 42 };
-    sub b { say a };
-    b;
-    # OUTPUT«42␤»
-
-Multiple return values are returned as a list or by creating a
-L<Capture|/type/Capture>. Destructuring can be used to untangle multiple return
-values.
-
-    sub a { 42, 'answer' };
-    put a.perl;
-    # OUTPUT«(42, "answer")␤»
-
-    my ($n, $s) = a;
-    put [$s, $n];
-    # OUTPUT«answer 42␤»
-
-    sub b { <a b c>.Capture };
-    put b.perl;
-    # OUTPUT«\("a", "b", "c")␤»
+    f :dest</tmp/foo> :src</tmp/bar> :lines(512)
+    f :32x :50y :110z   # This flavor of "adverb" works, too
+    f :a:b:c            # The spaces are also optional.
 
 =head2 X<Multi-dispatch|declarator,multi>
 
-Perl 6 allows you to write several routines with the same name, but different
+Perl 6 allows you to write several routines with the same name, but different
 signatures. When the routine is called by name, the runtime environment
 decides which is the best match, and calls that I<candidate>. You declare
 each candidate with the C<multi> declarator.
@@ -238,10 +211,9 @@ arguments. Consider this basic example:
        say "Hooray for your $reason, $name -- you got rank $rank!";
     }
 
-=for code :skip-test
-congratulate('being a cool number', 'Fred');     # OK
-congratulate('being a cool number', 'Fred', 42); # OK
-congratulate('being a cool number', 42);         # Proto match error
+    congratulate('being a cool number', 'Fred');     # OK
+    congratulate('being a cool number', 'Fred', 42); # OK
+    congratulate('being a cool number', 42);         # Proto match error
 
 All C<multi congratulate> will conform to the basic signature of two strings,
 optionally followed by further parameters. The C<|> is an un-named C<Capture>
@@ -249,8 +221,7 @@ parameter, allowing a C<multi> which takes additional arguments. The third call
 fails at compile time because the proto's C<signature> becomes the common
 signature of all three, and C<42> doesn't match C<Str>.
 
-=for code :skip-test
-say &congratulate.signature #-> (Str $reason, Str $name, | is raw)
+    say &congratulate.signature #-> (Str $reason, Str $name, | is raw)
 
 You can give the C<proto> a function body, and place the C<{*}> where
 you want the dispatch to be done.
@@ -269,11 +240,10 @@ you want the dispatch to be done.
 C<{*}> always dispatches to candidates with the parameters it's called
 with. Parameter defaults and type coercions will work but are not be passed on.
 
-=for code :skip-test
-proto mistake-proto(Str() $str, Int $number = 42) {*}
-multi mistake-proto($str, $number) { say $str.WHAT }
-mistake-proto(7, 42);  #-> (Int) -- coercions not passed on
-mistake-proto('test'); #!> fails -- defaults not passed on
+    proto mistake-proto(Str() $str, Int $number = 42) {*}
+    multi mistake-proto($str, $number) { say $str.WHAT }
+    mistake-proto(7, 42);  #-> (Int) -- coercions not passed on
+    mistake-proto('test'); #!> fails -- defaults not passed on
 
 =comment only
 
@@ -312,32 +282,29 @@ This can be achieved by using a slurpy with a C<+> or C<+@> instead of C<**>:
 This results in the following behavior, which is known as the "single
 argument rule" and is important to understand when invoking slurpy functions:
 
-=for code :skip-test
-grab(1, 2);      # grab 1 grab 2
-grab((1, 2));    # grab 1 grab 2
-grab($(1, 2));   # grab 1 2
-grab((1, 2), 3); # grab 1 2 grab 3
+    grab(1, 2);      # grab 1 grab 2
+    grab((1, 2));    # grab 1 grab 2
+    grab($(1, 2));   # grab 1 2
+    grab((1, 2), 3); # grab 1 2 grab 3
 
 This also makes user-requested flattening feel consistent whether there is
 one sublist, or many:
 
-=for code :skip-test
-grab(flat (1, 2), (3, 4));   # grab 1 grab 2 grab 3 grab 4
-grab(flat $(1, 2), $(3, 4)); # grab 1 2 grab 3 4
-grab(flat (1, 2));           # grab 1 grab 2
-grab(flat $(1, 2));          # grab 1 2
+    grab(flat (1, 2), (3, 4));   # grab 1 grab 2 grab 3 grab 4
+    grab(flat $(1, 2), $(3, 4)); # grab 1 2 grab 3 4
+    grab(flat (1, 2));           # grab 1 grab 2
+    grab(flat $(1, 2));          # grab 1 2
 
 It is worth noting that mixing binding and sigilless variables
 in these cases requires a bit of finesse, because there is no Scalar
 intermediary used during binding.
 
-=for code :skip-test
-my $a = (1, 2);  # Normal assignment, equivalent to $(1, 2)
-grab($a);       # grab 1 2
-my $b := (1, 2); # Binding, $b links directly to a bare (1, 2)
-grab($b);       # grab 1 grab 2
-my \c = (1, 2);  # Sigilless variables always bind, even with '='
-grab(c);        # grab 1 grab 2
+    my $a = (1, 2);  # Normal assignment, equivalent to $(1, 2)
+    grab($a);       # grab 1 2
+    my $b := (1, 2); # Binding, $b links directly to a bare (1, 2)
+    grab($b);       # grab 1 grab 2
+    my \c = (1, 2);  # Sigilless variables always bind, even with '='
+    grab(c);        # grab 1 grab 2
 
 =head1 Functions are First-Class Objects
 
@@ -347,17 +314,21 @@ other object.
 There are several ways to get hold of a code object. You can assign it to a
 variable at the point of declaration:
 
-    my $square = sub (Numeric $x) { $x * $x }
-    # and then use it:
-    say $square(6);    # 36
+=begin code
+my $square = sub (Numeric $x) { $x * $x }
+# and then use it:
+say $square(6);    # 36
+=end code
 
 Or you can reference an existing named function by using the C<&> in front of
 it.
 
-    sub square($x) { $x * $x };
+=begin code
+sub square($x) { $x * $x };
 
-    # get hold of a reference to the function:
-    my $func = &square
+# get hold of a reference to the function:
+my $func = &square
+=end code
 
 This is very useful for I<higher order functions>, that is, functions that
 take other functions as input. A simple one is L<map|/type/List#routine_map>,
@@ -374,20 +345,22 @@ reference surrounded by C<[> and C<]>.
 
     sub plus { $^a + $^b };
     say 21 [&plus] 21;
-    # OUTPUT«42␤»
+    OUTPUT«42␤»
 
 =head2 Closures
 
 All code objects in Perl 6 are I<closures>, which means they can reference
 lexical variables from an outer scope.
 
-    sub generate-sub($x) {
-        my $y = 2 * $x;
-        return sub { say $y };
-        #      ^^^^^^^^^^^^^^  inner sub, uses $y
-    }
-    my $generated = generate-sub(21);
-    $generated(); # 42
+=begin code
+sub generate-sub($x) {
+    my $y = 2 * $x;
+    return sub { say $y };
+    #      ^^^^^^^^^^^^^^  inner sub, uses $y
+}
+my $generated = generate-sub(21);
+$generated();           # 42
+=end code
 
 Here C<$y> is a lexical variable inside C<generate-sub>, and the inner
 subroutine that is returned uses it. By the time that the inner sub is called,
@@ -416,17 +389,19 @@ They carry additional functionality in addition to what L<Block|/type/Block>
 supplies: they can come as L<multis|#Multi-dispatch>,
 you can L<wrap|/type/Routine#method_wrap> them, and exit early with C<return>:
 
-    my $keywords = set <if for unless while>;
+=begin code :allow<B>
+my $keywords = set <if for unless while>;
 
-    sub has-keyword(*@words) {
-        for @words -> $word {
-            return True if $word (elem) $keywords;
-        }
-        False;
+sub has-keyword(*@words) {
+    for @words -> $word {
+        B<return> True if $word (elem) $keywords;
     }
+    False;
+}
 
-    say has-keyword 'not', 'one', 'here';       # False
-    say has-keyword 'but', 'here', 'for';       # True
+say has-keyword 'not', 'one', 'here';       # False
+say has-keyword 'but', 'here', 'for';       # True
+=end code
 
 Here C<return> does not just leave the block inside which it was called, but
 the whole routine. In general, blocks are transparent to C<return>, they
@@ -524,13 +499,12 @@ prefix the operator name with a C<&>-sigil.
 
 =head2 Precedence
 
-X«|is tighter»X«|is equiv»X«|is looser»
-Operator precedence in Perl 6 is specified relatively to existing operators.
-The traits C<is tighter>, C<is equiv> and C<is looser> can be provided with an
-operator, the new operators precedence is related to. More then one trait can
-be applied.
+Operator precedence in Perl 6 is specified relatively to existing operators.
+With C<is tighter(&other-operator)> you can squeeze in an operator with a
+tighter precedence than the one you specified, but looser than the
+next-tighter precedence level.
 
-For example C«infix:<*>» has a tighter precedence than C«infix:<+>»,
+For example C<< infix:<*> >> has a tighter precedence than C<< infix:<+> >>,
 and squeezing one in between works like this:
 
 =begin code
@@ -567,6 +541,10 @@ or as
 
     1 + (2 + 3)         # right associative
 
+or as single call to an operator with three operands
+
+    infix:<+>(1, 2, 3); # list associative
+
 For addition of real numbers, the distinction is somewhat moot, because C<+> is
 L<mathematically associative|https://en.wikipedia.org/wiki/Associative_property>.
 
@@ -576,7 +554,7 @@ exponentiation/power operator, C<< infix:<**> >>:
     say 2 ** (2 ** 3);      # 256
     say (2 ** 2) ** 3;      # 64
 
-Perl 6 has the following possible associativity configurations:
+Perl 6 has the following possible associativity configurations:
 
 =begin table
 
@@ -590,7 +568,6 @@ Perl 6 has the following possible associativity configurations:
 
 =end table
 
-X<|is assoc (trait)>
 You can specify the associativity of an operator with the C<is assoc> trait,
 where C<left> is the default associativity.
 
@@ -609,15 +586,14 @@ type, variable, routine, attribute, or other language object.
 
 Examples of traits are:
 
-=for code :skip-test
-class ChildClass is ParentClass { ... }
-#                ^^ trait, with argument ParentClass
-has $.attrib is rw;
-#            ^^^^^  trait with name 'rw'
-class SomeClass does AnotherRole { ... }
-#               ^^^^ trait
-has $!another-attribute handles <close>;
-#                       ^^^^^^^ trait
+    class ChildClass is ParentClass { ... }
+    #                ^^ trait, with argument ParentClass
+    has $.attrib is rw;
+    #            ^^^^^  trait with name 'rw'
+    class SomeClass does AnotherRole { ... }
+    #               ^^^^ trait
+    has $!another-attribute handles <close>;
+    #                       ^^^^^^^ trait
 
 ... and also C<is tighter>, C<is looser>, C<is equiv> and C<is assoc> from the previous
 section.
@@ -655,21 +631,27 @@ chain with arguments of your own choice.
 
 For example
 
-    multi a(Any $x) {
-        say "Any $x";
-        return 5;
-    }
-    multi a(Int $x) {
-        say "Int $x";
-        my $res = callwith($x + 1);
-        say "Back in Int with $res";
-    }
+=begin code
+multi a(Any $x) {
+    say "Any $x";
+    return 5;
+}
+multi a(Int $x) {
+    say "Int $x";
+    my $res = callwith($x + 1);
+    say "Back in Int with $res";
+}
 
-    # OUTPUT:
-    # a 1;
-    # Int 1
-    # Any 2
-    # Back in Int with 5
+a 1;
+=end code
+
+produces this output:
+
+=begin code
+Int 1
+Any 2
+Back in Int with 5
+=end code
 
 Here C<a 1> calls the most specific C<Int> candidate first, and C<callwith>
 re-dispatches to the less specific C<Any> candidate.
@@ -677,17 +659,19 @@ re-dispatches to the less specific C<Any> candidate.
 Very often, a re-dispatch passes the same argument along that the caller
 received, so there is a special routine for that: C<callsame>.
 
-    multi a(Any $x) {
-        say "Any $x";
-        return 5;
-    }
-    multi a(Int $x) {
-        say "Int $x";
-        my $res = callsame;
-        say "Back in Int with $res";
-    }
+=begin code
+multi a(Any $x) {
+    say "Any $x";
+    return 5;
+}
+multi a(Int $x) {
+    say "Int $x";
+    my $res = callsame;
+    say "Back in Int with $res";
+}
 
-    a 1;        # Int 1\n Any 1\n Back in Int with 5
+a 1;        # Int 1\n Any 1\n Back in Int with 5
+=end code
 
 Another common use case is to re-dispatch to the next routine in the chain,
 and not do anything else afterwards. That's why we have C<nextwith> and
@@ -764,13 +748,14 @@ Coercion types can help you to have a specific type inside a routine, but
 accept wider input. When the routine is called, the argument is automatically
 converted to the narrower type.
 
-=for code :skip-test
+=begin code
 sub double(Int(Cool) $x) {
     2 * $x
 }
 
 say double '21';    # 42
 say double Any;     # Type check failed in binding $x; expected 'Cool' but got 'Any'
+=end code
 
 Here the C<Int> is the target type to which the argument will be coerced, and
 C<Cool> is the type that the routine accepts as input.
@@ -781,34 +766,31 @@ to C<Int()>.
 The coercion works simply by looking for a method with the same name
 as the target type. So you can define coercions for your own types like so:
 
-=begin code :skip-test
-class Bar {...}
+    class MyModule::Foo {
+       has $.msg = "I'm a foo!";
 
-class Foo {
-   has $.msg = "I'm a foo!";
+       method MyModule::Bar {
+          ::('MyModule::Bar').new(:msg($.msg ~ ' But I am now Bar.'));
+       }
+    }
 
-   method Bar {
-       Bar.new(:msg($.msg ~ ' But I am now Bar.'));
-   }
-}
+    class MyModule::Bar {
+       has $.msg;
+    }
 
-class Bar {
-   has $.msg;
-}
+    sub print-bar(MyModule::Bar() $bar) {
+       say $bar.WHAT; # (Bar)
+       say $bar.msg;  # I'm a foo! But I am now Bar.
+    }
 
-sub print-bar(Bar() $bar) {
-   say $bar.WHAT; # (Bar)
-   say $bar.msg;  # I'm a foo! But I am now Bar.
-}
-
-print-bar Foo.new;
-=end code
+    print-bar MyModule::Foo.new;
 
 Coercion types are supposed to work wherever types work, but Rakudo
 currently (2015.02) only implements them for subroutine parameters.
 
 =head1 C<sub MAIN>
-X<|MAIN>X«|command line arguments»
+
+X<|MAIN>
 
 The sub with the special name C<MAIN> is executed after all relevant phasers,
 and its signature is the means by which command line arguments can be
@@ -830,23 +812,6 @@ call L<exit|https://docs.perl6.org/routine/exit>.
         say 'Verbosity ', ($verbose ?? 'on' !! 'off');
 
         exit 1;
-    }
-
-=head1 C<sub USAGE>
-X<|USAGE>
-
-If the no multi candidate of C<MAIN> is found for the given command line
-parameters, the sub C<USAGE> is called. If no such method is found, output a
-generated usage message.
-
-    sub MAIN(Int $i){ say $i == 42 ?? 'answer' !! 'dunno' }
-
-    sub USAGE(){
-    print Q:c:to/EOH/;
-    Usage: {$*PROGRAM-NAME} [number]
-
-    Prints the answer or 'dunno'.
-    EOH
     }
 
 =end pod

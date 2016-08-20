@@ -30,9 +30,11 @@ Defined as:
 
     method handled(Failure:D:) returns Bool:D
 
-Returns C<True> for handled failures, C<False> otherwise.
+Usage:
 
-    sub f() { fail }; my $v = f; say $v.handled; # False
+    FAILURE.handled
+
+Returns C<True> for handled failures, C<False> otherwise.
 
 =head2 method exception
 
@@ -40,11 +42,11 @@ Defined as:
 
     method exception(Failure:D:) returns Exception
 
-Returns the L<Exception> object that the failure wraps.
+Usage:
 
-    sub f() { fail }; my $v = f; $v.Exception;
-    CATCH { default { put .^name, ': ', .Str } };
-    # OUTPUT: «X::AdHoc: Failed␤»
+    FAILURE.exception
+
+Returns the L<Exception> object that the failure wraps.
 
 =head2 method Bool
 
@@ -52,11 +54,11 @@ Defined as:
 
     multi method Bool(Failure:D:) returns Bool:D
 
-Returns C<False>, and marks the failure as handled.
+Usage:
 
-    sub f() { fail }; my $v = f; say $v.handled; $v.Bool; say $v.handled;
-    # False
-    # True
+    FAILURE.Bool
+
+Returns C<False>, and marks the failure as handled.
 
 =head2 method defined
 
@@ -64,9 +66,11 @@ Defined as:
 
     multi method defined(Failure:D:) returns Bool:D
 
+Usage:
+
+    FAILURE.defined
+
 Returns C<False> (failures are officially undefined), and marks
 the failure as handled.
-
-    sub f() { fail }; my $v = f; say $v.defined; # False
 
 =end pod

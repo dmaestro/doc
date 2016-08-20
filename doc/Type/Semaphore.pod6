@@ -17,18 +17,16 @@ printer becomes available.
 
     method BUILD( Int:D :$nbr-printers ) {
       for ^$nbr-printers -> $pc {
-        $!printers[$pc] = { :name{"printer-$pc"} };
+        $!printers[$pc] = { :name{"printer-$pc"}, ... };
       }
 
       $!print-control .= new($nbr-printers);
     }
 
-    method find-available-printer-and-print-it($job) { say "Is printed!"; }
-
     method print( $print-job ) {
       $!print-control.acquire;
 
-      self.find-available-printer-and-print-it($print-job);
+      find-available-printer-and-print-it($job);
 
       $!print-control.release;
     }

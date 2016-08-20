@@ -4,7 +4,7 @@
 
 =SUBTITLE Capturing current frame state
 
-    class CallFrame {}
+    class CallFrame { ... }
 
 There's no way to instantiate a C<CallFrame>. Instead, it is captured from the current state of a program using the L<callframe> subroutine.
 
@@ -22,7 +22,7 @@ Each frame stores L<annotations>, including the L<file> and L<line> annotations,
 Here's a short example that will find the calling routine and prints the package of the caller using the C<callframe> interface.
 
     for 1..* -> $level {
-        given callframe($level) -> $frame {
+        given callframe($level) {
             when CallFrame {
                 next unless $frame.code ~~ Routine;
                 say $frame.code.package;
