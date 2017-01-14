@@ -7,6 +7,23 @@ An HTML version of this documentation can be found at https://docs.perl6.org/.
 (If you are browsing this repository via github, it will not display most
 files correctly, because this is Perl 6 Pod, and github assumes Perl 5 POD).
 
+## Install
+
+This module is available via the Perl 6 module ecosystem. Use
+
+    zef install p6doc
+
+to install the binaries and make it available in your binaries
+execution path.
+
+Once it has been downloaded, run
+
+    p6doc-index build
+
+to build the index.
+
+## Use
+
 With a Rakudo `perl6` executable in `PATH`, try
 
     ./bin/p6doc Type::Str
@@ -15,9 +32,16 @@ to see the documentation for class `Str`, or
 
     ./bin/p6doc Type::Str.split
 
-to see the documentation for method `split` in class `Str`.
+to see the documentation for method `split` in class `Str`. You can
+skip the `./bin` part if you have installed it via `panda` or
+`zef`. You can also do
 
---------
+    p6doc -f slurp
+
+to browse the documentation of standard functions. Depending on your
+disk speed and Rakudo version, it might take a while.
+
+-------
 
 ## Building the HTML documentation
 
@@ -48,8 +72,8 @@ computer by starting the included `app.pl` program:
 You can then view the examples documentation by pointing your web browser at
 [http://localhost:3000](http://localhost:3000).
 
-You will need at least [Mojolicious](https://metacpan.org/pod/Mojolicious) installed and [Inline::Python](https://metacpan.org/pod/Inline::Python) is recommended
-to speed up the syntax highlighting phase.
+You will need at least [Mojolicious](https://metacpan.org/pod/Mojolicious)
+installed and you will need [nodejs](https://nodejs.org) to perform highlighting.
 
 --------
 
@@ -110,17 +134,6 @@ explains briefly how to get started contributing documentation.
 --------
 
 ## Wishlist stuff:
-
- *  Search terms like `.any`, `any()`, `&any`, `::Any`, etc. can be
-    used to disambiguate whether information is sought on a method,
-    subroutine, type, etc.
-
- *  Searching for `Int.Bool` returns the documentation for the
-    inherited method `Numeric.Bool`.
-
- *  Searching for an operator name returns the documentation for
-    the operator.  (`p6doc '%%'`  returns the documentation for
-    `&infix:<%%>`.)
 
  *  Perl 6 implementations could embed `P<...>` tags in their source
     code that would then inline the corresponding entry from `p6doc`.

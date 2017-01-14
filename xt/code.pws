@@ -41,6 +41,7 @@ azc
 aäo
 aå
 aöä
+bada
 barz
 bbbbb
 bbbbbdddddeff
@@ -62,6 +63,7 @@ bv
 bw
 bz
 calc
+callees
 capturename
 carefulclass
 cba
@@ -78,6 +80,7 @@ conditionvariable
 cx
 dddddeff
 ddthh
+desc
 dest
 digifier
 digitmatcher
@@ -154,6 +157,7 @@ libfoo
 libmysql
 libsomething
 listofstuff
+listoid
 loggedversion
 lrep
 makequestionable
@@ -221,6 +225,7 @@ renderbarchart
 restnameds
 restpos
 ret
+sayit
 saysomething
 setcallback
 sev
@@ -240,6 +245,7 @@ sprintfformat
 sref
 ssz
 startee
+stmt
 strorarrayofstr
 structobj
 su
@@ -269,6 +275,7 @@ twodim
 txt
 typehouse
 ull
+unitish
 userblock
 utestuser
 vn

@@ -169,6 +169,7 @@ can be used to that effect.
     sub f(*@a where {$_.all ~~ Int}) { say @a };
     f(42);
     f(<a>);
+    CATCH { default { say .^name, ' ==> ', .Str }  }
     # OUTPUT«[42]␤Constraint type check failed for parameter '@a'␤  in sub f at ...»
 
 =head3 Constraining named Arguments
@@ -228,8 +229,8 @@ unnecessary. C<:(Num:_ $)> is the same as C<:(Num $)>.
 
 =head3 X«Constraining signatures of Callables|function reference (constrain)»
 
-To constrain block and subroutine references based on their signature write
-the signature after the argument name.
+To constrain L<block|/type/Block> and L<subroutine|/type/Sub> references based
+on their signature write the signature after the argument name.
 
     sub f(&c:(Int, Str))  { say c(10, 'ten') };
     sub g(Int $i, Str $s) { $s ~ $i };
@@ -245,10 +246,30 @@ has the same function. C<Nil> and its subclasses do B<not> abide by return
 constraints. This allows L<Failure|/type/Failure> to be returned and passed on
 down the call chain.
 
-    sub(--> Int) { my Int $i; $i };
-    sub(--> Int:D) { 1 }
-    sub() returns Int { 1 };
+    sub foo(--> Int) { my Int $i; $i };
+    sub baz(--> Int:D) { 1 }
+    sub bar() returns Int { 1 };
     sub does-not-work(--> Int) { "" }; # throws X::TypeCheck::Return
+
+There are two other ways to declare a return type:
+
+    sub foo() of Int { 1 };
+    my Int sub bar { 1 };
+
+C<of> is just the real name of the C<returns> keyword, and the
+prefix(C-like) form can be used too. Although all the ways are valid,
+the C<-->> form is preferred for several reasons:
+(1) it can handle constant values while the others can't;
+(2) for consistency, it is the only form accepted on this site; and
+(3) the C<returns> form is planned for future removal.
+
+The following illustrates how to write a signature returning a constant value:
+
+=begin code :skip-test
+my 42 sub bad-answer {};       # This will fail.
+sub bad-answer2 returns 42 {}; # This too.
+sub answer(--> 42) { return; } # This doesn't.
+=end code
 
 If the type constraint is a constant expression, it is used as the return value
 of the routine. Any return statement in that routine has to be argumentless.
@@ -272,6 +293,12 @@ be omitted.
     sub f(Int(Str) $want-int, Str() $want-str) { say $want-int.WHAT, $want-str.WHAT }
     f '10', 10;
     # OUTPUT«(Int)(Str)␤»
+
+    use MONKEY;
+    augment class Str { method Date() { Date.new(self) } };
+    sub foo(Date(Str) $d) { say $d.WHAT; say $d };
+    foo "2016-12-01";
+    # OUTPUT«Date.new(2016,11,1)␤»
 
 =head2 X<Slurpy (A.K.A. Variadic) Parameters|parameter,*@;parameter,*%,slurpy argument (Signature)>
 
@@ -339,7 +366,7 @@ dissolving one or more layers of bare C<Iterables>.
     my @array = <a b c>;
     my $list := <d e f>;
     sub a(*@a)  { @a.perl.say };
-    a(@array)                  # ["a", "b", "c"]
+    a(@array);                 # ["a", "b", "c"]
     a(1, $list, [2, 3]);       # [1, "d", "e", "f", 2, 3]
     a([1, 2]);                 # [1, 2]
     a(1, [1, 2], ([3, 4], 5)); # [1, 1, 2, 3, 4 5]
@@ -453,11 +480,20 @@ L<Pair|/type/Pair> with C<|> to turn it into a named argument.
     my $pair = :named(1);
     f |$pair;                               # «(:$named)␤»
 
-The same can be used to convert a Hash into named arguments.
+The same can be used to convert a C<Hash> into named arguments.
 
     my %pairs = also-named => 4;
     sub f(|c) {};
     f |%pairs;                              # «(:$also-named)␤»
+
+A C<Hash> that contains a list may prove problematic when slipped into named
+arguments. To avoid the extra layer of containers coerce to L<Map|/type/Map>
+before slipping.
+
+    class C { has $.x; has $.y; has @.z };
+    my %h = <x y z> Z=> (5, 20, [1,2]);
+    say C.new(|%h.Map);
+    # OUTPUT«C.new(x => 5, y => 20, z => [1, 2])␤»
 
 X<|optional argument (Signature)>
 =head2 Optional and Mandatory Parameters
@@ -590,20 +626,20 @@ Traits can be followed by the where clause:
 
 =head2 method params
 
-    method params(Signature:D:) returns Positional
+    method params(Signature:D: --> Positional)
 
 Returns the list of L<C<Parameter>> objects that make up the signature.
 
 =head2 method arity
 
-    method arity(Signature:D:) returns Int:D
+    method arity(Signature:D: --> Int:D)
 
 Returns the I<minimal> number of positional arguments required to satisfy
 the signature.
 
 =head2 method count
 
-    method count(Signature:D:) returns Real:D
+    method count(Signature:D: --> Real:D)
 
 Returns the I<maximal> number of positional arguments which can be bound
 to the signature. Returns C<Inf> if there is a slurpy positional parameter.

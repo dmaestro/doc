@@ -172,6 +172,7 @@ cond
 config
 configs
 const
+contextualizer
 controlflow
 coprime
 coroutines
@@ -342,6 +343,7 @@ fsvo
 ftfy
 func
 gc
+gcc
 gcd
 genericsocket
 geodesists
@@ -444,6 +446,7 @@ instantiation
 int
 interop
 interoperability
+interoperate
 interoperation
 intmax
 introspectiveness
@@ -551,6 +554,7 @@ metaoperator
 metasyntactic
 methodcontainer
 methodname
+metre
 minibuffer
 minimalistic
 minmax
@@ -623,6 +627,7 @@ nfkc
 nfkd
 niecza
 nl
+nodejs
 nodispatcher
 nofile
 nok
@@ -634,6 +639,7 @@ nopackage
 noself
 nosuchlang
 nosuchtype
+notafile
 notcomposable
 notcomposed
 notdynamic
@@ -658,6 +664,7 @@ oo
 oop
 opaquepointer
 opcode
+opcodes
 opendir
 openforwriting
 opstring
@@ -757,6 +764,7 @@ proc
 programfile
 programmatically
 promisestatus
+propname
 proscriptive
 proto
 proto's
@@ -765,6 +773,7 @@ prototyped
 pseudopackage
 ptrdiff
 punct
+pvalname
 pygmentize
 pygments
 qast
@@ -930,6 +939,8 @@ splitdir
 splitpath
 splitter
 sprintf
+sql
+sqlite
 sqrt
 srand
 src
@@ -1084,6 +1095,7 @@ unimportable
 uniname
 uninames
 uniprop
+uniprops
 unival
 univals
 unlesselse
@@ -1127,6 +1139,7 @@ vms
 waitpid
 wantarray
 waypoints
+wb
 webpages
 webserver
 wfm

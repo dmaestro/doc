@@ -6,11 +6,35 @@
 
     class Sub is Routine { }
 
-A type for subroutines. Subs are created with the C<sub> declarator keyword
+A type for subroutines and operators. Subs are created with the C<sub>
+declarator keyword followed by a identifier. Operators are declared by C<sub>
+followed by C<prefix>, C<infix>, C<postfix>, C<circumfix> and C<postcircumfix>
+a colon and the operator name in a quote construct. For (post-)circumfix
+operators separate the two parts by while space.
 
     my $s = sub ($a, $b) { $a + $b };
     say $s.WHAT;        # (Sub)
     say $s(2, 5);       # 7
+
+    sub postfix:<♥>($a){ say „I love $a!“ }
+    42♥;
+    # OUTPUT«I love 42!␤»
+    sub postcircumfix:<⸨ ⸩>(Positional $a, Whatever){ say $a[0], '…', $a[*-1] }
+    [1,2,3,4]⸨*⸩;
+    OUTPUT«1…4␤»
+    constant term:<♥> = "♥"; # We don't want to quote "love", do we?
+    sub circumfix:<α ω>($a){ say „$a is the beginning and the end.“ };
+    α♥ω;
+    # OUTPUT«♥ is the beginning and the end.␤»
+
+
+Note that subs that go by the same name as
+L<coercers|/language/typesystem#Coercion> will not take precedence over
+coercers. To call them use the C<&>-sigil.
+
+    sub Int(Str $s){'oi‽'};
+    say [Int, Int('42'),&Int('42')];
+    # OUTPUT«[(Int) 42 oi‽]␤»
 
 =head1 Traits
 X<|trait_mod (declarator)>
@@ -52,5 +76,29 @@ to it (or even themselves) and we can apply traits to objects at runtime.
     sub bar {}
     &trait_mod:<is>(&bar, :foo);
     # OUTPUT«is foo called␤is foo called␤»
+
+=head2 trait is default (Sub class)
+
+There is a special trait for C<Sub>s called C<is default>. This trait is
+designed as a way to disambiguate C<multi> function calls that would normally
+throw an error because Rakudo would not know which one to use. This means that
+given the following two C<Sub>s, the one with the C<is default> trait will be
+called.
+
+    multi sub f() is default { say "Hello there" }
+    multi sub f() { say "Hello friend" }
+    f();   #"Hello there" is printed.
+
+The C<is default> trait can become very useful for debugging and other uses but
+keep in mind that it will only resolve an ambiguous dispatch between two C<Sub>s
+of the same precedence. If one of the C<Sub>s are narrower than another, then
+that one will be called. For example:
+
+    multi sub f() is default { say "Hello there" }
+    multi sub f(:$greet) { say "Hello " ~ $greet }
+    f();   #"Use of uninitialized value $greet..."
+
+In this example, the C<multi> without C<is default> was called because it was
+actually narrower than the C<Sub> with it.
 
 =end pod

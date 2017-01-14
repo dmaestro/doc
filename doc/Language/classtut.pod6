@@ -4,11 +4,13 @@
 
 =SUBTITLE A tutorial for creating and using classes in Perl 6
 
+X<|OOP>
+
 =comment More descriptive title?
 
 Perl 6 has a rich built in syntax for the definition and use of classes
 for object oriented programming, allowing for the definition of state
-(as L<attributes|#State>,) and behaviour (as L<methods|#Methods>,)
+(as L<attributes|#State>) and behaviour (as L<methods|#Methods>)
 in the objects of a class.
 
 A simple class is provided with a default constructor, that allows the
@@ -102,10 +104,10 @@ through the C<has> keyword, and behaviors introduced through the C<method>
 keyword.
 
 X<|type object>
-X<|defined>
-X<|.defined>
+X<|DEFINITE>
+X<|.DEFINITE>
 
-Declaring a class creates a I<type object> which, by default, is installed into
+Declaring a class creates a new I<type object> which, by default, is installed into
 the current package (just like a variable declared with C<our> scope).  This
 type object is an "empty instance" of the class. For example, types such as
 C<Int> and C<Str> refer to the type object of one of the Perl 6 built-in
@@ -113,16 +115,22 @@ classes. The example above uses the class name C<Task> so that other code can
 refer to it later, such as to create class instances by calling the C<new>
 method.
 
-Type objects are I<undefined>, in the sense that they return C<False> if you
-call the C<.defined> method on them. You can use this method to find out if
-a given object is a type object or not:
+You can use C<.DEFINITE> method to find out if what you have is an instance
+or a type object:
 
-    my $obj = Int;
-    if $obj.defined {
-        say "Ordinary, defined object";
-    } else {
-        say "Type object";
-    }
+    say Int.DEFINITE; # False (type object)
+    say 426.DEFINITE; # True  (instance)
+
+    class Foo {};
+    say Foo.DEFINITE;     # False (type object)
+    say Foo.new.DEFINITE; # True  (instance)
+
+You can also use type smileys to only accept instances or type objects:
+
+    multi foo (Int:U) { "It's a type object!" }
+    multi foo (Int:D) { "It's an instance!"   }
+    say foo Int; # It's a type object!
+    say foo 42;  # It's an instance!
 
 =head1 State
 
@@ -601,7 +609,7 @@ we can ask it a few questions:
     if $o ~~ GeekCook { say "It's a geeky cook" };
     say $o.WHAT;
     say $o.perl;
-    say $o.^methods(:local).join(', ');
+    say $o.^methods(:local)».name.join(', ');
     say $o.^name;
 
 The output can look like this:
@@ -631,11 +639,11 @@ to be handled correctly by C<.perl> at some point.>
 
 C<$o.^methods(:local)> produces a list of L<Method|/type/Method>s that can be
 called on C<$o>. The C<:local> named argument limits the returned methods to
-those defined in the C<Employee> class and excludes the inherited methods.
+those defined in the C<Programmer> class and excludes the inherited methods.
 
 The syntax of calling a method with C<.^> instead of a single dot means that
 it is actually a method call on its I<meta class>, which is a class managing
-the properties of the C<Employee> class – or any other class you are
+the properties of the C<Programmer> class – or any other class you are
 interested in. This meta class enables other ways of introspection too:
 
     say $o.^attributes.join(', ');

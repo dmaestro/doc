@@ -72,7 +72,7 @@ Also see L<#Adverb> and L<#Colon Pair and Colon List>.
 X<|Allomorph>
 
 A type that has two related values which may be used depending on the
-context. For example L<IntStr|/type/IntStr> allomorph C<is> both 
+context. For example L<IntStr|/type/IntStr> allomorph C<is> both
 an L<Int|/type/Int> and a L<Str|/type/Str>, so it will be accepted by
 anything that expects an C<Int>, a C<Str>, or an C<IntStr>. Keep in mind
 that certain constructs, such as L<sets, bags, and mixes|/language/setbagmix>
@@ -87,7 +87,7 @@ as a result of parsing a quoted string:
     say <42.1e0>.WHAT; # (NumStr)
     say <42.1>.WHAT;   # (RatStr)
 
-Note: if the number contains an operator (C</> or C<+>) and there're no other
+Note: if the number contains an operator (C</> or C<+>) and there are no other
 characters inside the angular brackets, you will receive a literal of that
 number:
 
@@ -353,7 +353,7 @@ As Late As Possible
 X<|autopun>
 
 A self-referencing pun, e.g. "Are you ignorant or apathetic?" - "I don't
-know, and I don't care.
+know, and I don't care."
 
 =head2 backlog
 X<|backlog>
@@ -564,7 +564,7 @@ The C<mainline> is the program text that is not part of any kind of block.
     f();        # in mainline again
 
 You can also have the mainline of any package-like declarator, such as
-L<class|#Class>, L<module|/language/modules>, L<grammar|/language/grammars>, etc.  These are
+class, L<module|/language/modules>, L<grammar|/language/grammars>, etc.  These are
 typically run just after the class/module/grammar have been compiled (or
 when loaded from a pre-compiled file).
 
@@ -572,7 +572,7 @@ when loaded from a pre-compiled file).
 X<|MoarVM>
 
 MoarVM is short for Metamodel On A Runtime Virtual Machine.
-It's a virtual machine designed specifically for L<#NQP> and its L<#MOP>:
+It's a virtual machine designed specifically for L<#NQP> and its L<MOP|/language/mop>:
 L<#6model>.  A document about
 L<the purpose of MoarVM|https://github.com/MoarVM/MoarVM/blob/master/docs/reveal.md>.
 MoarVM has some similarities with the Hotspot VM so you may peruse its
@@ -580,10 +580,18 @@ L<glossary|http://openjdk.java.net/groups/hotspot/docs/HotSpotGlossary.html>
 for entries missing from the present one.
 
 =head1 Multi-Dispatch
-X<|Multi-Dispatch>
+X<|Multi-Dispatch>X<|MMD>
+
+The process of picking a candidate for calling of a set of methods or subs that
+come by the same name but with different arguments. The most narrow candidate
+wins. In case of an ambiguity, a routine with C<is default> trait will be
+chosen if one exists, otherwise an exception is thrown.
 
 =head1 multi-method
 X<|multi-method>
+
+A L<method|/type/Method> that has multiple candidates going by the same name
+and are subject to L<Multi-Dispatch|#Multi-Dispatch>.
 
 =head1 Niecza
 X<|Niecza>
@@ -675,14 +683,11 @@ X<|Perl>
 
 The Perl programming language in its many forms.
 
-=head1 Perl Community
-X<|Perl Community>
-
 =head1 PERL
 X<|REPL>
 
 A way to describe L<Perl|#Perl> as a language, considered to be improper by
-many in the L<#Perl Community>.
+many in the L<Perl Community|/language/community>.
 
 =head1 POD
 X<|POD>
@@ -708,7 +713,7 @@ Successor to L<#PAST> ('Q' being the next letter after 'P').
 X<|Rakudo>
 
 Rakudo is the name of a Perl 6 implementation that runs on L<#MoarVM> and
-the JVM.  It is an abbreviation of "Rakuda-do," which, when translated
+the JVM.  It is an abbreviation of C<Rakuda-do>, which, when translated
 from Japanese, means "The Way of the Camel".  Also, in Japanese, "Rakudo"
 means "Paradise."
 
@@ -742,7 +747,7 @@ either $, @, %, or & respectively for a L<scalar|/type/Scalar>,
 L<array|/type/Array>, L<hash|/type/Hash>, or L<code|/type/Code> variable.  See also
 Twigil and role.  Also sigiled variables allow short conventions
 for L<variable interpolation|#Variable Interpolation> in a double quoted
-string, or even L<postcircumfix|#Postcircumfix> expressions starting with
+string, or even postcircumfix expressions starting with
 such a variable.
 
 =head1 Sigilless Variable
@@ -771,7 +776,7 @@ X<|Stub>
 X<|Symbol>
 
 Fancy alternative way to denote a name. Generally used in the context of
-L<module|/language/modules>s linking, be it in the L<#OS> level, or at the Perl 6 L<#Virtual Machine> level
+L<module|/language/modules>s linking, be it in the OS level, or at the Perl 6 L<#Virtual Machine> level
 for modules generated from languages targeting these VMs.  The set of
 imported or exported symbols is called the symbol table.
 
@@ -840,10 +845,10 @@ X<|Variable Interpolation>
 X<|Virtual Machine>
 
 A virtual machine is the Perl compiler entity that executes the
-L<bytecode|#Bytecode>.  It can optimize the bytecode or generate
+L<bytecode|#bytecode>.  It can optimize the bytecode or generate
 machine code Just in Time.  Examples are
 L<#MoarVM>, L<#Parrot> (who are intended to run Perl 6) and more
-generic virtual machines such as L<#JVM> and Javascript.
+generic virtual machines such as JVM and Javascript.
 
 =head1 whitespace
 X<|whitespace>

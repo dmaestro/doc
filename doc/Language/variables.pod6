@@ -6,7 +6,9 @@
 
 Variable names start with a special character called a I<sigil>, followed
 optionally by a second special character named I<twigil> and then an
-I<identifier>.
+I<identifier>. Variables are symbolic names for values or
+L<containers|/language/containers>. Variable declarations or assignment of
+values may create a container on the fly.
 
 =head1 Sigils
 X<|$ (sigil),@ (sigil),% (sigil),& (sigil)>
@@ -241,8 +243,8 @@ boolean context before using it for anything else:
 =head2 The C<!> Twigil
 X<|$!>
 
-Attributes are variables that exist per instance of a class. They may be
-directly accessed from within the class via C<!>:
+L<Attributes|/language/objects#Attributes> are variables that exist per instance
+of a class. They may be directly accessed from within the class via C<!>:
 
     my class Point {
         has $.x;
@@ -305,16 +307,6 @@ following is possible too:
 
 For more details on objects, classes and their attributes and methods see
 L<object orientation|/language/objects>.
-
-=head2 The C«<» Twigil
-
-    "foo:bar" ~~ /$<key>=\w+ ':' $<value> = \w+/;
-    say "Key is $<key> and value is $<value>";   # "Key is foo and value is bar"
-    say "Key is $/<key> and value is $/<value>"; # same thing
-
-The C<< < >> twigil is just an alias for C<< $/<...> >> where C<$/> is the
-match variable. For more information about the match variable see L<#The_$/_Variable> and
-L<type Match|/type/Match>.
 
 =head2 The C<^> Twigil
 X<|$^>
@@ -853,8 +845,10 @@ unsuccessfully, resetting the answer to 42.
 
 =head1 Type Constraints and Initialization
 
-Variables can have a type constraint, which goes between the declarator and
-the variable name.
+Variables have a type constraint via the L<container|/language/containers> they
+are bound to, which goes between the declarator and the variable name. The
+default type constraint is L<Mu|/type/Mu>. You can also use the trait
+L<of|/type/Variable#trait_of> to set a type constraint.
 
     my Int $x = 42;
     $x = 'a string';
@@ -862,7 +856,7 @@ the variable name.
     # OUTPUT: X::TypeCheck::Assignment: Type check failed in assignment to $x; expected Int but got Str ("a string")
 
 If a scalar variable has a type constraint but no initial value, it is
-initialized with the type object of the constraint type.
+initialized with the type object of the default value of the container it is bound to.
 
     my Int $x;
     say $x.^name;       # Int
@@ -888,7 +882,7 @@ re-applied by assigning C<Nil> to it:
 =head2 Default Defined Variables Pragma
 
 To force all variables to have a definedness constraint use the pragma C<use
-variables :D>. The pragma is lexically scoped and can be switched of with C<use
+variables :D>. The pragma is lexically scoped and can be switched off with C<use
 variables :_>.
 
 =begin code :skip-test
@@ -970,8 +964,8 @@ The C<Grammar.parse> method also sets the caller's C<$/> to the resulting
 L<Match> object.  For the following code:
 
 =begin code :skip-test
-use XML::Grammar; # panda install XML
-XML.Grammar.parse("<p>some text</p>");
+use XML::Grammar; # zef install XML
+XML::Grammar.parse("<p>some text</p>");
 say $/;
 
 # OUTPUT:
@@ -1132,7 +1126,7 @@ X<|$*SPEC>X<|$*TMPDIR>X<|$*THREAD>X<|$*SCHEDULER>
     ------------------+--------------------------------------------
     $*HOME            | An L<IO::Path> object representing the "home directory"
                       | of the user that is running the program.  If the
-                      | "home directory" cannot be determined it will be L<Nil>
+                      | "home directory" cannot be determined it will be L<Any>
     ------------------+--------------------------------------------
     $*SPEC            | The appropriate L<IO::Spec> sub-class for the platform that
                       | the program is running on. For OS-specific code, simply use smartmatch:

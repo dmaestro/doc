@@ -295,7 +295,7 @@ the values are the desired values. The names should include the sigil
     =end code
 
 Note, C<EXPORT> can't be declared inside a package because
-presently Rakudo (2015.09) seems to treat C<EXPORT> as part of the
+presently Rakudo (2015.09) treats C<EXPORT> as part of the
 compunit rather than the package.
 
 Whereas C<UNIT::EXPORT> packages deal with the named parameters passed
@@ -402,7 +402,7 @@ To share your module, do the following:
     =item Create a project directory named after your module. For
     example, if your module is C<Vortex::TotalPerspective>, then create a
     project directory named C<Vortex-TotalPerspective>. This project
-    directory name will also be used as the GitHub repo name.
+    directory name will also be used as the GitHub repository name.
 
     =begin item
     Make your project directory look like this:
@@ -415,7 +415,7 @@ To share your module, do the following:
         |   `-- Vortex
         |       `-- TotalPerspective.pod6
         |-- LICENSE
-        |-- META.info
+        |-- META6.json
         |-- README.md
         `-- t
             `-- basic.t
@@ -465,7 +465,7 @@ To share your module, do the following:
     »
 
     =begin item
-    Make your C<META.info> file look something like this:
+    Make your C<META6.json> file look something like this:
 
     =for code :allow<R>
     {
@@ -516,11 +516,11 @@ To share your module, do the following:
     =item Put your project under git version control if you haven't done so
     already.
 
-    =item Once you're happy with your project, create a repo for it at GitHub.
+    =item Once you're happy with your project, create a repository for it at GitHub.
     See L<GitHub's help docs|https://help.github.com/> if necessary. Your
-    GitHub repo should be named the same as your project directory. Immediately
+    GitHub repository should be named the same as your project directory. Immediately
     after creating the GitHub repo, GitHub shows you how to configure your
-    local repo to know about your GitHub repo.
+    local repository to know about your GitHub repository.
 
     =item Push your project to GitHub.
 
@@ -537,13 +537,13 @@ To share your module, do the following:
 
 B<That's it! Thanks for contributing to the Perl 6 community!>
 
-If you'd like to try out installing your module, use the X<panda> module
+If you'd like to try out installing your module, use the X<zef> module
 installer tool which is included with Rakudo Star Perl 6:
 
-=code panda install Vortex::TotalPerspective
+=code zef install Vortex::TotalPerspective
 
-This will download your module to its own working directory (C<~/.panda>),
-build it there, and install the module into C<~/.perl6>.
+This will download your module to its own working directory (C<~/.zef>),
+build it there, and install the module into your local Perl 6 installation directory.
 
 To use C<Vortex::TotalPerspective> from your scripts, just write
 C<use Vortex::TotalPerspective>, and your Perl 6 implementation will

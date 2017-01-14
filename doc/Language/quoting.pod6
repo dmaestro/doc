@@ -23,6 +23,22 @@ Delimiters can be nested, but in the plain C<Q> form, backslash escapes
 aren't allowed.  In other words, basic C<Q> strings are as literal as
 possible.
 
+Some delimiters are not allowed immediately after C<Q>, C<q>, or C<qq>. Any
+characters that are allowed in L<identifiers|language/syntax#Identifiers> are
+not allowed to be used, since in such a case, the quoting construct together
+with such characters are interpreted as an identifier. In addition, C<( )> is
+not allowed because that is interpreted as a function call. If you still wish
+to use those characters as delimiters, separate them from C<Q>, C<q>, or C<qq>
+with a space. Please note that some natural languages use a left delimiting
+quote on the right side of a string. C<Q> will not support those as it relies
+on unicode properties to tell left and right delimiters apart.
+
+=for code :allow<B>
+B<Q'>this will not work!B<'>
+B<Q(>this won't work either!B<)>
+B<Q (>this is fine, because of space after QB<)>
+B<Q '>and so is thisB<'>
+
 =for code :allow<B>
 Q<Make sure you B«<»matchB«>» opening and closing delimiters>
 Q{This is still a closing curly brace → B<\>}
@@ -39,15 +55,14 @@ The other quote forms add to this basic functionality:
 
 =head2 X<Escaping: q|quote,q;quote,' '>
 
-=for code :allow<B>
-B<'>Very plainB<'>
-B<q[>This backB<\s>lash staysB<]>
-B<q[>This backB<\\>slash staysB<]> # Identical output
-B<q{>This is not a closing curly brace → B<\}>, but this is → B<}>
-B<Q :q $>There are no backslashes here, only lots of B<\$>B<\$>B<\$>!B<$>
-B<'>(Just kidding. ThereB<\'>s no money in that string)B<'>
-B<'>No $interpolation {here}!B<'>
-B<Q:q!>Just a literal "\n" hereB<!>
+    'Very plain'
+    q[This back\slash stays]
+    q[This back\\slash stays] # Identical output
+    q{This is not a closing curly brace → \}, but this is → }
+    Q :q $There are no backslashes here, only lots of \$\$\$>!$
+    '(Just kidding. There\'s no money in that string)'
+    'No $interpolation {here}!'
+    Q:q!Just a literal "\n" here!
 
 The C<q> form allows for escaping characters that would otherwise end the
 string using a backslash. The backslash itself can be escaped, too, as in
@@ -56,15 +71,15 @@ delimiter, but it's also available as an adverb on C<Q>, as in the fifth and
 last example above.
 
 These examples produce:
-
-    Very plain
-    This back\slash stays
-    This back\slash stays
-    This is not a closing curly brace → } but this is →
-    There are no backslashes here, only lots of $$$!
-    (Just kidding. There's no money in that string)
-    No $interpolation {here}!
-    Just a literal "\n" here
+=for code :allow<B>
+Very plain
+This back\slash stays
+This back\slash stays
+This is not a closing curly brace → } but this is →
+There are no backslashes here, only lots of $$$!
+(Just kidding. There's no money in that string)
+No $interpolation {here}!
+Just a literal "\n" here
 
 =head2 X<Interpolation: qq|quote,qq;quote," ">
 
@@ -120,7 +135,7 @@ say "@neighborsB<.L<join>(', ')> and I try our best to coexist peacefully."
 However, C<"@example.com"> produces C<@example.com>.
 
 To call a subroutine use the C<&>-sigil.
-X<|&>
+X<|& (interpolation)>
 
     say "abc&uc("def")ghi";
     # OUTPUT«abcDEFghi␤»
@@ -162,7 +177,8 @@ X<|qw word quote>
 
 =for code :allow<B L>
 B<qw|>! @ # $ % ^ & * \| < > B<|> eqv '! @ # $ % ^ & * | < >'.words
-B<Q:w {> [ ] \{ \} B<}> eqv ('[', ']', '{', '}')
+B<q:w {> [ ] \{ \} B<}> eqv ('[', ']', '{', '}')
+B<Q:w |> [ ] { } B<|> eqv ('[', ']', '{', '}')
 
 The C<:w> form, usually written as C<qw>, splits the string into
 "words".  In this context, words are defined as sequences of non-whitespace
@@ -207,11 +223,11 @@ brackets around the number, without any extra spaces:
 Compared to C<42/10> and C<1+42i>, there's no division (or addition) operation
 involved. This is useful for literals in routine signatures, for example:
 
-    sub close-enough-τ (<355/113>) {
+    sub close-enough-π (<355/113>) {
         say "Your π is close enough!"
     }
-    close-enough-τ 710/226; # Your π is close enough!
-    
+    close-enough-π 710/226; # Your π is close enough!
+
     # WRONG: can't do this, since it's a division operation
     sub compilation-failure (355/113) {}
 
@@ -384,6 +400,20 @@ would produce:
   option {
       file "db.7.3.8";
   };
+
+You can begin multiple Heredocs in the same line.
+
+=begin code
+my ($first, $second) = qq:to/END1/, qq:to/END2/;
+  FIRST
+  MULTILINE
+  STRING
+  END1
+   SECOND
+   MULTILINE
+   STRING
+   END2
+=end code
 
 =head1 Regexes
 
